@@ -24,12 +24,41 @@ export default function BookForm({ onAdd }) {
 
   return (
     <form className="book-form" onSubmit={handleSubmit}>
-      <input name="title" placeholder="Book title" value={form.title} onChange={handleChange} required />
-      <input name="author" placeholder="Author" value={form.author} onChange={handleChange} required />
-      <input name="category" placeholder="Category" value={form.category} onChange={handleChange} />
-      <input name="publishedYear" placeholder="Published year" value={form.publishedYear} onChange={handleChange} />
-      <input name="isbn" placeholder="ISBN" value={form.isbn} onChange={handleChange} />
-      <button type="submit" >Add Book</button>
+      <input
+        name="title"
+        placeholder="Book title"
+        value={form.title}
+        onChange={handleChange}
+        required
+      />
+      <input
+        name="author"
+        placeholder="Author"
+        value={form.author}
+        onChange={handleChange}
+        required
+      />
+      <input
+        name="category"
+        placeholder="Category"
+        value={form.category}
+        onChange={handleChange}
+      />
+      <input
+        name="publishedYear"
+        type="number"
+        min="0"
+        placeholder="Published year"
+        value={form.publishedYear}
+        onChange={handleChange}
+      />
+      <input
+        name="isbn"
+        placeholder="ISBN"
+        value={form.isbn}
+        onChange={handleChange}
+      />
+      <button type="submit">Add Book</button>
     </form>
   );
 }

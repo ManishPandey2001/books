@@ -1,16 +1,15 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import bgImage from "../../books.png";
-import bg2 from "../../one.jpeg";
+import API from "../services/api";
+import booksImage from "../../books.png";
 
-export default function Login() {
+export default function Login({ onLogin }) {
   const navigate = useNavigate();
 
   const [form, setForm] = useState({
     email: "",
     password: "",
   });
-
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -25,85 +24,81 @@ export default function Login() {
     setError("");
 
     try {
-      const response = await fetch("http://localhost:5000/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(form),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || "Login failed");
-      }
-
-      // Save token and user data
+      const { data } = await API.post("/auth/login", form);
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
-
-      // Redirect after login
+      onLogin?.();
       navigate("/home");
     } catch (err) {
-      setError(err.message);
+      setError(err.response?.data?.message || err.message || "Login failed");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="auth-page"
-    style={{
-        backgroundImage: `url(${bg2})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        height: "100vh",
-      }}>
-      <div className="auth-card"
-      style={{
-        backgroundColor:'#a6f4b0',
-        // backgroundImage: `url(${bgImage})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        //height: "50vh",
-      }}>
-        <h1
-        style={{
-        //backgroundColor:'#a6f4b0',
-        backgroundImage: `url(${bgImage})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        //height: "50vh",
-      }} >📚 Library Login</h1>
-        <body></body>
-        <p>Please login to continue</p>
+    <div className="auth-page">
+      <div className="auth-shell">
+        <section className="auth-panel auth-panel-brand">
+          <span className="auth-kicker">Digital shelf management</span>
+          <h1>Keep your library organized, searchable, and easy to manage.</h1>
+          <p>
+            Track books, manage borrowing, and keep your collection tidy from one
+            calm dashboard.
+          </p>
+          <div className="auth-highlights">
+            <div>
+              <strong>Fast search</strong>
+              <span>Find books by title, author, or category in seconds.</span>
+            </div>
+            <div>
+              <strong>Borrow tracking</strong>
+              <span>See what is available and who currently has a book.</span>
+            </div>
+            <div>
+              <strong>Simple workflow</strong>
+              <span>Add, return, and remove books without extra clicks.</span>
+            </div>
+          </div>
+        </section>
 
-        <form onSubmit={handleSubmit} className="auth-form">
-          <input
-            type="email"
-            name="email"
-            placeholder="Enter email"
-            value={form.email}
-            onChange={handleChange}
-            required
-          />
+        <section className="auth-panel auth-card">
+          <div className="auth-card-header">
+            <span className="auth-badge">Library Access</span>
+            <h2>Welcome back</h2>
+            <p>Sign in to open your dashboard.</p>
+          </div>
 
-          <input
-            type="password"
-            name="password"
-            placeholder="Enter password"
-            value={form.password}
-            onChange={handleChange}
-            required
-          />
+          <div className="auth-card-image">
+            <img src={booksImage} alt="Stack of books" />
+          </div>
 
-          {error && <p style={{ color: "red" }}>{error}</p>}
+          <form onSubmit={handleSubmit} className="auth-form">
+            <input
+              type="email"
+              name="email"
+              placeholder="Enter email"
+              value={form.email}
+              onChange={handleChange}
+              required
+            />
 
-          <button type="submit" disabled={loading}>
-            {loading ? "Logging in..." : "Login"}
-          </button>
-        </form>
+            <input
+              type="password"
+              name="password"
+              placeholder="Enter password"
+              value={form.password}
+              onChange={handleChange}
+              required
+            />
+
+            {error && <p className="form-error">{error}</p>}
+
+            <button type="submit" disabled={loading}>
+              {loading ? "Logging in..." : "Login"}
+            </button>
+          </form>
+        </section>
       </div>
     </div>
   );
